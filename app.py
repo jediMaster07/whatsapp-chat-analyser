@@ -16,15 +16,6 @@ import plotly.express as px
 from datetime import datetime, timedelta
 # from wordcloud import WordCloud, STOPWORDS 
 
-
-# def read_file(file):
-#     '''Reads Whatsapp text file into a list of strings'''
-#     x = open(file,'r', encoding = 'utf-8') # Opens the text file into variable x but the variable cannot be explored yet
-#     y = x.read() # By now it becomes a huge chunk of string that we need to separate line by line
-#     content = y.splitlines() # The splitline method converts the chunk of string into a list of strings
-    
-#     return content
-
 def prepare_df_and_parse_date_and_time(chatc, progress_bar):
     text_df, error_count, error_list = pd.DataFrame(), 0, list()
     for i in range(len(chatc)):
