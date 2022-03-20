@@ -1,5 +1,4 @@
 # Imports
-
 import time
 # import emoji
 # import string
@@ -15,6 +14,8 @@ import plotly.express as px
 # from matplotlib import pyplot as plt
 from datetime import datetime, timedelta
 # from wordcloud import WordCloud, STOPWORDS 
+
+
 
 @st.cache
 def prepare_df_and_parse_date_and_time(chatc):
@@ -103,9 +104,20 @@ def hourly_chat_distribution(text_df):
 
 
 
-
 ## MAIN
+st.set_page_config(
+     page_title="WA Chat Analyser",
+     page_icon="random",
+     initial_sidebar_state="expanded",
+     menu_items={
+         'Get Help': 'https://www.extremelycoolapp.com/help',
+         'Report a bug': "https://www.extremelycoolapp.com/bug",
+         'About': "# This is a header. This is an *extremely* cool app!"
+     }
+ )
+
 st.write("# WhatsApp Text Analyser \n###### (v0.2.45 Pre-release)")
+text_df = None
 
 uploaded_file = st.file_uploader("Choose a file", type=[".txt"],
                                  help="Choose the exported text file")
@@ -114,60 +126,70 @@ if uploaded_file is not None:
     chat = [line.decode("utf-8") for line in uploaded_file][:50]
     
     start_time = time.time()
+    placeholder = st.empty()
+    placeholder.write("Processing. Please wait...")
+    
     text_df, error_count, error_list, col4 = prepare_df_and_parse_date_and_time(chat)
+    placeholder.empty()
+    
     st.success(f"Chat sucessfully processed! {error_count} error(s) occured while processing!")
     st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
 
 
 view = st.sidebar.selectbox("Choose view:", 
-                 ("Total texts", "Weekly trend", "Hourly trend"))
+                 ("Home", "Total texts", "Weekly trend", "Hourly trend"))
 if view == "Total texts":
-        # st.write(text_df)
-    chat_distribution_df = total_chat_distribution(text_df)
-    chat_distribution_df.sort_values(by="Text", inplace=True)
-    
-    chat_distribution_fig = px.bar(chat_distribution_df, 
-                                title="Total texts sent",
-                                x=chat_distribution_df.index, 
-                                y="Text",
-                                text="Text",
-                                color="Text",
-                                #  color_continuous_scale="Bluered",
-                                #  color_continuous_scale="aggrnyl",
-                                color_continuous_scale="Turbo",
-                                    )
-    chat_distribution_fig.update_layout(xaxis=dict(showgrid=False),
-                                        yaxis=dict(showgrid=False)
+    if text_df is not None: 
+        # Execute only if there's data in the dataframe
+        chat_distribution_df = total_chat_distribution(text_df)
+        chat_distribution_df.sort_values(by="Text", inplace=True)
+        
+        chat_distribution_fig = px.bar(chat_distribution_df, 
+                                    title="Total texts sent",
+                                    x=chat_distribution_df.index, 
+                                    y="Text",
+                                    text="Text",
+                                    color="Text",
+                                    #  color_continuous_scale="Bluered",
+                                    #  color_continuous_scale="aggrnyl",
+                                    color_continuous_scale="Turbo",
                                         )
-    
-    st.plotly_chart(chat_distribution_fig, use_container_width=True)
+        chat_distribution_fig.update_layout(xaxis=dict(showgrid=False),
+                                            yaxis=dict(showgrid=False)
+                                            )
+        
+        st.plotly_chart(chat_distribution_fig, use_container_width=True)
     st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
 
 elif view == "Weekly trend":
-    weekly_freq = weekly_chat_distribution(text_df)
-    # st.write(weekly_freq)
-    weekly_freq_fig = px.line(weekly_freq, 
-                            title="Weekly chat trends",
-                            labels=dict(x="Fruit", y="Amount", color="Place"))
-    weekly_freq_fig.update_layout(xaxis=dict(showgrid=False),
-                                yaxis=dict(showgrid=False),
-                                showlegend=False
-                                )
-    # TODO: Make the hover label more appealing
-    st.plotly_chart(weekly_freq_fig)
+    if text_df is not None: 
+        weekly_freq = weekly_chat_distribution(text_df)
+        # st.write(weekly_freq)
+        weekly_freq_fig = px.line(weekly_freq, 
+                                  y="Texts sent",
+                                  title="Weekly chat trends",
+                                  labels=dict(index="Day of the week"))
+        weekly_freq_fig.update_layout(xaxis=dict(showgrid=False),
+                                      yaxis=dict(showgrid=False)
+                                      )
+        weekly_freq_fig.update_xaxes(type='category')
+        # TODO: Make the hover label more appealing
+        st.plotly_chart(weekly_freq_fig)
     st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
 
 elif view == "Hourly trend":    
-    hourly_freq = hourly_chat_distribution(text_df)
-    # st.write(hourly_freq)
-    hourly_freq_fig = px.line(hourly_freq, 
-                            title="Hourly chat trends",
-                            labels=dict(x="Fruit", y="Amount", color="Place"))
-    hourly_freq_fig.update_layout(xaxis=dict(showgrid=False),
-                                yaxis=dict(showgrid=False),
-                                showlegend=False
-                                )
-    # TODO: Make the hover label more appealing
-    st.plotly_chart(hourly_freq_fig)
+    if text_df is not None: 
+        hourly_freq = hourly_chat_distribution(text_df)
+        # st.write(hourly_freq)
+        hourly_freq_fig = px.line(hourly_freq, 
+                                  y="Texts sent",
+                                  title="Hourly chat trends",
+                                  labels=dict(index="Hour of the day"))
+        hourly_freq_fig.update_layout(xaxis=dict(showgrid=False),
+                                    yaxis=dict(showgrid=False),
+                                    showlegend=False
+                                    )
+        # TODO: Make the hover label more appealing
+        st.plotly_chart(hourly_freq_fig)
     st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
     
