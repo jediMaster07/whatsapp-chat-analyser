@@ -105,7 +105,7 @@ def hourly_chat_distribution(text_df):
 
 
 ## MAIN
-st.write("# WhatsApp Text Analyser \n###### (v0.2.41 Pre-release)")
+st.write("# WhatsApp Text Analyser \n###### (v0.2.45 Pre-release)")
 
 uploaded_file = st.file_uploader("Choose a file", type=[".txt"],
                                  help="Choose the exported text file")
@@ -122,8 +122,7 @@ if uploaded_file is not None:
 view = st.sidebar.selectbox("Choose view:", 
                  ("Total texts", "Weekly trend", "Hourly trend"))
 if view == "Total texts":
-    with st.expander("View total chat distribution"):
-        st.write(text_df)
+        # st.write(text_df)
         chat_distribution_df = total_chat_distribution(text_df)
         chat_distribution_df.sort_values(by="Text", inplace=True)
         
