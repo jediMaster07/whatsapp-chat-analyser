@@ -123,24 +123,24 @@ view = st.sidebar.selectbox("Choose view:",
                  ("Total texts", "Weekly trend", "Hourly trend"))
 if view == "Total texts":
         # st.write(text_df)
-        chat_distribution_df = total_chat_distribution(text_df)
-        chat_distribution_df.sort_values(by="Text", inplace=True)
-        
-        chat_distribution_fig = px.bar(chat_distribution_df, 
-                                    title="Total texts sent",
-                                    x=chat_distribution_df.index, 
-                                    y="Text",
-                                    text="Text",
-                                    color="Text",
-                                    #  color_continuous_scale="Bluered",
-                                    #  color_continuous_scale="aggrnyl",
-                                    color_continuous_scale="Turbo",
+    chat_distribution_df = total_chat_distribution(text_df)
+    chat_distribution_df.sort_values(by="Text", inplace=True)
+    
+    chat_distribution_fig = px.bar(chat_distribution_df, 
+                                title="Total texts sent",
+                                x=chat_distribution_df.index, 
+                                y="Text",
+                                text="Text",
+                                color="Text",
+                                #  color_continuous_scale="Bluered",
+                                #  color_continuous_scale="aggrnyl",
+                                color_continuous_scale="Turbo",
+                                    )
+    chat_distribution_fig.update_layout(xaxis=dict(showgrid=False),
+                                        yaxis=dict(showgrid=False)
                                         )
-        chat_distribution_fig.update_layout(xaxis=dict(showgrid=False),
-                                            yaxis=dict(showgrid=False)
-                                            )
-        
-        st.plotly_chart(chat_distribution_fig, use_container_width=True)
+    
+    st.plotly_chart(chat_distribution_fig, use_container_width=True)
     st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
 
 elif view == "Weekly trend":
