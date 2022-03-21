@@ -107,7 +107,7 @@ def hourly_chat_distribution(text_df):
 ## MAIN
 st.set_page_config(
      page_title="WA Chat Analyser",
-     page_icon="random",
+     page_icon=":speech_balloon:",
      initial_sidebar_state="expanded",
      menu_items={
          'Get Help': 'https://www.extremelycoolapp.com/help',
@@ -159,7 +159,7 @@ if view == "Total texts":
                                             )
         
         st.plotly_chart(chat_distribution_fig, use_container_width=True)
-    st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
+        st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
 
 elif view == "Weekly trend":
     if text_df is not None: 
@@ -175,7 +175,7 @@ elif view == "Weekly trend":
         weekly_freq_fig.update_xaxes(type='category')
         # TODO: Make the hover label more appealing
         st.plotly_chart(weekly_freq_fig)
-    st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
+        st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
 
 elif view == "Hourly trend":    
     if text_df is not None: 
@@ -191,5 +191,5 @@ elif view == "Hourly trend":
                                     )
         # TODO: Make the hover label more appealing
         st.plotly_chart(hourly_freq_fig)
-    st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
+        st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
     
