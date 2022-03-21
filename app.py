@@ -116,14 +116,14 @@ st.set_page_config(
      }
  )
 
-st.write("# WhatsApp Text Analyser \n###### (v0.2.45 Pre-release)")
+st.write("# WhatsApp Text Analyser \n###### (v2.5.45 beta)")
 text_df = None
 
 uploaded_file = st.file_uploader("Choose a file", type=[".txt"],
                                  help="Choose the exported text file")
 # This blocks executes only when a file is uploaded, else not
 if uploaded_file is not None:
-    chat = [line.decode("utf-8") for line in uploaded_file][:50]
+    chat = [line.decode("utf-8") for line in uploaded_file]
     
     start_time = time.time()
     placeholder = st.empty()
@@ -169,11 +169,12 @@ elif view == "Weekly trend":
         weekly_freq_fig = px.line(weekly_freq, 
                                   y="Texts sent",
                                   title="Weekly chat trends",
+                                  text="Texts sent",
                                   labels=dict(index="Day of the week"))
         weekly_freq_fig.update_layout(xaxis=dict(showgrid=False),
                                       yaxis=dict(showgrid=False)
                                       )
-        weekly_freq_fig.update_xaxes(type='category')
+        weekly_freq_fig.update_traces(textposition="top center")
         # TODO: Make the hover label more appealing
         st.plotly_chart(weekly_freq_fig)
         st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
@@ -184,29 +185,45 @@ elif view == "Hourly trend":
         # st.write(hourly_freq)
         hourly_freq_fig = px.line(hourly_freq, 
                                   y="Texts sent",
+                                  text="Texts sent",
                                   title="Hourly chat trends",
                                   labels=dict(index="Hour of the day"))
         hourly_freq_fig.update_layout(xaxis=dict(showgrid=False),
                                     yaxis=dict(showgrid=False),
                                     showlegend=False
                                     )
+        hourly_freq_fig.update_traces(textposition="top center")
         # TODO: Make the hover label more appealing
         st.plotly_chart(hourly_freq_fig)
         st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
 
 elif view == "Phrase search trend":
     if text_df is not None:
+        search_phrase = ""
         search_phrase = st.text_input("Enter search phrase")
-        st.write("Searching for phrase: " + search_phrase)
+        
         search_phrase_df = text_df.loc[text_df["Text"].str.lower().str.contains(search_phrase.lower())]
         search_phrase_gbdf = search_phrase_df.groupby("Sender").count()
-        phrase_search_fig = px.bar(search_phrase_gbdf,
-                                   x=search_phrase_gbdf.index,
-                                   y="Text",
-                                   labels=dict(Text="No. of Times Sent"))
-        phrase_search_fig.update_layout(xaxis=dict(showgrid=False),
-                                        yaxis=dict(showgrid=False),
-                                        showlegend=False
-                                        )
-        st.plotly_chart(phrase_search_fig)
+        search_phrase_gbdf.sort_values(by="Text", inplace=True)
+        result = search_phrase_gbdf.count()["Date"]
+        
+        if result > 0 and search_phrase != "":
+            st.write("Searching for phrase: " + search_phrase)
+            phrase_search_fig = px.bar(search_phrase_gbdf,
+                                       x=search_phrase_gbdf.index,
+                                       y="Text",
+                                       title="Phrase sent by each user",
+                                       text="Text",
+                                       color="Text",
+                                       #  color_continuous_scale="Bluered",
+                                       #  color_continuous_scale="aggrnyl",
+                                       color_continuous_scale="Turbo",
+                                       labels=dict(Text="No. of Times Sent"))
+            phrase_search_fig.update_layout(xaxis=dict(showgrid=False),
+                                            yaxis=dict(showgrid=False),
+                                            showlegend=False
+                                            )
+            st.plotly_chart(phrase_search_fig)
+        else: st.write("Please enter a search phrase above")
+        st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
         
