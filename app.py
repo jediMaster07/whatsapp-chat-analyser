@@ -137,7 +137,8 @@ if uploaded_file is not None:
 
 
 view = st.sidebar.selectbox("Choose view:", 
-                 ("Home", "Total texts", "Weekly trend", "Hourly trend"))
+                 ("Home", "Total texts", "Weekly trend", "Hourly trend", "Phrase search trend"))
+
 if view == "Total texts":
     if text_df is not None: 
         # Execute only if there's data in the dataframe
@@ -192,4 +193,20 @@ elif view == "Hourly trend":
         # TODO: Make the hover label more appealing
         st.plotly_chart(hourly_freq_fig)
         st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
-    
+
+elif view == "Phrase search trend":
+    if text_df is not None:
+        search_phrase = st.text_input("Enter search phrase")
+        st.write("Searching for phrase: " + search_phrase)
+        search_phrase_df = text_df.loc[text_df["Text"].str.lower().str.contains(search_phrase.lower())]
+        search_phrase_gbdf = search_phrase_df.groupby("Sender").count()
+        phrase_search_fig = px.bar(search_phrase_gbdf,
+                                   x=search_phrase_gbdf.index,
+                                   y="Text",
+                                   labels=dict(Text="No. of Times Sent"))
+        phrase_search_fig.update_layout(xaxis=dict(showgrid=False),
+                                        yaxis=dict(showgrid=False),
+                                        showlegend=False
+                                        )
+        st.plotly_chart(phrase_search_fig)
+        
