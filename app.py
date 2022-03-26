@@ -119,6 +119,21 @@ st.set_page_config(
 st.write("# WhatsApp Text Analyser \n###### (v2.5.45 beta)")
 text_df = None
 
+
+view = st.sidebar.selectbox("Choose view:", 
+                 ("Home", "Total texts", "Weekly trend", "Hourly trend", "Phrase search trend"),
+                 help="Select the trend you want to see from here. Select 'Phrase search' to see the frequency of a particular phrase")
+
+
+with st.sidebar.expander("What is this?"):
+    st.write("A hobby project")
+
+with st.sidebar.expander("How does this work?"):
+    st.write("Open any chat on whatsApp >> Click on the three dot menu on top-right >> More >> Export chat >> Choose 'without media' >> Upload the exported file here.")
+
+with st.sidebar.expander("Data we collect"):
+    st.write("None. The entire project is open-source [here](https://github.com/jediMaster07/whatsapp-chat-analyser/tree/streamlit). Didn't make a lot of sense to build a closed-source app with open-source technologies")
+
 uploaded_file = st.file_uploader("Choose a file", type=[".txt"],
                                  help="Choose the exported text file")
 # This blocks executes only when a file is uploaded, else not
@@ -135,9 +150,6 @@ if uploaded_file is not None:
     st.success(f"Chat sucessfully processed! {error_count} error(s) occured while processing!")
     st.write("--- %s seconds elapsed ---" % (time.time() - start_time))
 
-
-view = st.sidebar.selectbox("Choose view:", 
-                 ("Home", "Total texts", "Weekly trend", "Hourly trend", "Phrase search trend"))
 
 if view == "Total texts":
     if text_df is not None: 
